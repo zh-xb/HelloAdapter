@@ -17,7 +17,7 @@ import java.util.*
  * @Author: zhangxiaobai
  * @Date: 2020/8/29 16:15
  */
-class HelloHolder<T>(itemView: View) : ViewHolder(itemView) {
+open class HelloHolder<T>(itemView: View) : ViewHolder(itemView) {
     private var sa: SparseArray<View> = SparseArray()
 
     fun  getView(viewId: Int): View? {
@@ -98,6 +98,9 @@ class HelloHolder<T>(itemView: View) : ViewHolder(itemView) {
         itemView.layoutParams = param
     }
 
-    fun bindData(data: MutableList<T>, position: Int) {}
+    /**
+     * HelloAdapter的子类可以复写该方法实现view和数据绑定，在多布局的adapter中使用该方法更方便。
+     */
+    open fun bindViewData(data: MutableList<T>, position: Int) {}
 
 }

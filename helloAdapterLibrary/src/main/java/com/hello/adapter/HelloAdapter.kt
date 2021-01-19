@@ -66,10 +66,16 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         }
     }
 
+    /**
+     * 多布局时，自定义布局类型
+     */
     open fun getItemViewHelloType(position: Int): Int {
         return DATA_VIEW
     }
 
+    /**
+     * 多布局时，通过viewType创建不同的HelloHolder
+     */
     open fun onCreateViewHelloHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
         val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
         return HelloHolder(view)
@@ -147,7 +153,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                             }
                         }
                     }
-                    holder.bindData(baseData,position)
+                    holder.bindViewData(baseData,dataPosition)
                 }
             }
         } catch (e: Exception) {
