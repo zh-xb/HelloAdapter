@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/add_header"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="加头"/>
+        <Button
+            android:id="@+id/remove_header"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="减头"/>
+        <Button
+            android:id="@+id/add_footer"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="加尾"/>
+        <Button
+            android:id="@+id/remove_footer"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="减尾"/>
+        <Button
+            android:id="@+id/add_data"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="加数据"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/other_bt"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="其他"/>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/test_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>
