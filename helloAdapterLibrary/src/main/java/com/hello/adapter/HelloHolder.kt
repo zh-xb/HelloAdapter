@@ -17,7 +17,7 @@ import java.util.*
  * @Author: zhangxiaobai
  * @Date: 2020/8/29 16:15
  */
-class HelloHolder(itemView: View) : ViewHolder(itemView) {
+class HelloHolder<T>(itemView: View) : ViewHolder(itemView) {
     private var sa: SparseArray<View> = SparseArray()
 
     fun  getView(viewId: Int): View? {
@@ -29,58 +29,58 @@ class HelloHolder(itemView: View) : ViewHolder(itemView) {
         return view
     }
 
-    fun setItemBackgroud(drawable: Drawable): HelloHolder {
+    fun setItemBackgroud(drawable: Drawable): HelloHolder<T> {
         itemView.background = drawable
         return this
     }
 
-    fun setItemBackgroudColor(@ColorInt color: Int): HelloHolder {
+    fun setItemBackgroudColor(@ColorInt color: Int): HelloHolder<T> {
         itemView.setBackgroundColor(color)
         return this
     }
 
-    fun setItemBackgroudResource(resid: Int): HelloHolder {
+    fun setItemBackgroudResource(resid: Int): HelloHolder<T> {
         itemView.setBackgroundResource(resid)
         return this
     }
 
-    fun setText(viewId: Int, text: String): HelloHolder {
+    fun setText(viewId: Int, text: String): HelloHolder<T> {
         val view = getView(viewId) as TextView
         view.text = text
         return this
     }
 
-    fun setText(viewId: Int, stringId: Int): HelloHolder {
+    fun setText(viewId: Int, stringId: Int): HelloHolder<T> {
         val view = getView(viewId) as TextView
         view.setText(stringId)
         return this
     }
 
-    fun setTextColor(viewId: Int, colorId: Int): HelloHolder {
+    fun setTextColor(viewId: Int, colorId: Int): HelloHolder<T> {
         val view = getView(viewId) as TextView
         view.setTextColor(colorId)
         return this
     }
 
-    fun setImgResource(viewId: Int, imgId: Int): HelloHolder {
+    fun setImgResource(viewId: Int, imgId: Int): HelloHolder<T> {
         val view = getView(viewId) as ImageView
         view.setImageResource(imgId)
         return this
     }
 
-    fun setImgBitmap(viewId: Int, bitmap: Bitmap): HelloHolder {
+    fun setImgBitmap(viewId: Int, bitmap: Bitmap): HelloHolder<T> {
         val view = getView(viewId) as ImageView
         view.setImageBitmap(bitmap)
         return this
     }
 
-    fun setImgDrawable(viewId: Int, drawable: Drawable): HelloHolder {
+    fun setImgDrawable(viewId: Int, drawable: Drawable): HelloHolder<T> {
         val view = getView(viewId)  as ImageView
         view.setImageDrawable(drawable)
         return this
     }
 
-    fun setViewVisibility(viewId: Int, isVisibility: Boolean): HelloHolder {
+    fun setViewVisibility(viewId: Int, isVisibility: Boolean): HelloHolder<T> {
         val view = getView(viewId)
         view?.visibility = if (isVisibility) View.VISIBLE else View.GONE
         return this
@@ -98,6 +98,6 @@ class HelloHolder(itemView: View) : ViewHolder(itemView) {
         itemView.layoutParams = param
     }
 
-    fun bindData(data: Any) {}
+    fun bindData(data: MutableList<T>, position: Int) {}
 
 }

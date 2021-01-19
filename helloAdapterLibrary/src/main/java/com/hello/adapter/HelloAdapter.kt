@@ -14,7 +14,7 @@ import java.util.*
  * @Author: zhangxiaobai
  * @Date: 2020/8/29 16:14
  */
-abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<HelloHolder>() {
+abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<HelloHolder<T>>() {
     // 显示数据的布局id
     private var layoutId = 0
     // 空数据要传的布局id
@@ -26,25 +26,31 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     private var customData: String? = null
     // 无数据时是否显示暂无数据提示页面
     private var showEmptyLayout = true
-    private var onItemClick: OnItemClick? = null
-    private var onItemClickForData: OnItemClickForData<T>? = null
-    private var onItemLongClick: OnItemLongClick? = null
-    private var onItemLongClickForData: OnItemLongClickForData<T>? = null
-    private var onHeadAndFootClick: OnHeadAndFootClick? = null
+    private var onItemClickListener: OnItemClickListener? = null
+    private var onItemClickForDataListener: OnItemClickForDataListener<T>? = null
+    private var onItemLongClickListener: OnItemLongClickListener? = null
+    private var onItemLongClickForDataListener: OnItemLongClickForDataListener<T>? = null
+    private var onHeadAndFootClickListener: OnHeadAndFootClickListener? = null
     // 头布局view
-    private val HEADER_VIEW = 0x10000111
+    private val HEADER_VIEW = 0x01
     // 尾布局view
-    private val FOOTER_VIEW = 0x10000222
+    private val FOOTER_VIEW = 0x02
     // 数据填充的view
-    private val DATA_VIEW = 0x10000333
+    private val DATA_VIEW = 0x03
     // 空数据显示的view
-    private val EMPTY_VIEW = 0x10000444
+    private val EMPTY_VIEW = 0x04
     // 空数据的viewHolder
-    private var emptyHolder: HelloHolder? = null
+    private var emptyHolder: HelloHolder<T>? = null
     // 头部view的父布局
     private var headerViewLayout: LinearLayout? = null
     // 尾部view的父布局
     private var footerViewLayout: LinearLayout? = null
+
+
+    override fun getItemCount(): Int {
+        // 增加 头、尾和空数据3个固定布局
+        return baseData.size + 3
+    }
 
     override fun getItemViewType(position: Int): Int {
         if (0 == position) {
@@ -54,13 +60,22 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
             return EMPTY_VIEW
         }
         return if (position < itemCount - 1) {
-            DATA_VIEW
+            getItemViewHelloType(position-2)
         } else {
             FOOTER_VIEW
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelloHolder {
+    open fun getItemViewHelloType(position: Int): Int {
+        return DATA_VIEW
+    }
+
+    open fun onCreateViewHelloHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
+        val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
+        return HelloHolder(view)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
         when {
             HEADER_VIEW == viewType -> {
                 if (null == headerViewLayout) {
@@ -84,10 +99,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                 emptyHolder = HelloHolder(emptyView)
                 return emptyHolder!!
             }
-            DATA_VIEW == viewType -> {
-                val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
-                return HelloHolder(view)
-            }
+//            DATA_VIEW == viewType -> {
+////                val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
+////                return HelloHolder(view)
+//                return onCreateViewHelloHolder(parent, viewType)
+//            }
             FOOTER_VIEW == viewType -> {
                 if (null == footerViewLayout) {
                     initFooterView()
@@ -100,19 +116,15 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                 return HelloHolder(footerViewLayout!!)
             }
             else -> {
-                val view: View =
-                    LayoutInflater.from(context).inflate(R.layout.item_empty_layout2, parent, false)
-                return HelloHolder(view)
+//                val view: View =
+//                    LayoutInflater.from(context).inflate(R.layout.item_empty_layout2, parent, false)
+//                return HelloHolder(view)
+                return onCreateViewHelloHolder(parent, viewType)
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        // 增加 头、尾和空数据3个固定布局
-        return baseData.size + 3
-    }
-
-    override fun onBindViewHolder(holder: HelloHolder, position: Int) {
+    override fun onBindViewHolder(holder: HelloHolder<T>, position: Int) {
         try {
             if (holder.itemViewType == EMPTY_VIEW && null != emptyHolder) { // 数据为空的布局
                 if (showEmptyLayout && baseData.size == 0) {
@@ -120,7 +132,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                 } else {
                     emptyHolder!!.setVisibility(false)
                 }
-            } else if (holder.itemViewType == DATA_VIEW) {
+            } else if (holder.itemViewType != HEADER_VIEW && holder.itemViewType != FOOTER_VIEW && holder.itemViewType != EMPTY_VIEW) {
                 val dataPosition = position - 2
                 if (dataPosition < baseData.size) {
                     bindViewHolder(holder, baseData, dataPosition)
@@ -135,6 +147,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                             }
                         }
                     }
+                    holder.bindData(baseData,position)
                 }
             }
         } catch (e: Exception) {
@@ -216,6 +229,13 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
+     * 获取所有的数据集合
+     */
+    open fun getData(): MutableList<T> {
+        return baseData
+    }
+
+    /**
      * 添加尾布局
      *
      * @param layoutId
@@ -242,8 +262,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         for (layoutId in layoutIds) {
             val view: View = foot.findViewById(layoutId)
             view.setOnClickListener {
-                if (null != onHeadAndFootClick) {
-                    onHeadAndFootClick!!.headAndFootClick(view)
+                if (null != onHeadAndFootClickListener) {
+                    onHeadAndFootClickListener!!.headAndFootClick(view)
                 }
             }
         }
@@ -277,8 +297,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         for (layoutId in layoutIds) {
             val view: View = header.findViewById(layoutId)
             view.setOnClickListener {
-                if (null != onHeadAndFootClick) {
-                    onHeadAndFootClick!!.headAndFootClick(view)
+                if (null != onHeadAndFootClickListener) {
+                    onHeadAndFootClickListener!!.headAndFootClick(view)
                 }
             }
         }
@@ -357,58 +377,58 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         }
     }
 
-    protected abstract fun bindViewHolder(holder: HelloHolder, data: MutableList<T>, position: Int)
+    protected abstract fun bindViewHolder(holder: HelloHolder<T>, data: MutableList<T>, position: Int)
 
     /**
      * 设置头和尾view的监听事件
      */
-    fun setOnHeadAndFootClick(onHeadAndFootClick: OnHeadAndFootClick?) {
-        this.onHeadAndFootClick = onHeadAndFootClick
+    fun setOnHeadAndFootClickListener(onHeadAndFootClick: OnHeadAndFootClickListener?) {
+        this.onHeadAndFootClickListener = onHeadAndFootClick
     }
 
-    interface OnHeadAndFootClick {
+    interface OnHeadAndFootClickListener {
         fun headAndFootClick(view: View?)
     }
 
-    interface OnItemClick {
+    interface OnItemClickListener {
         fun itemClick(view: View?, position: Int)
     }
 
-    interface OnItemClickForData<T> {
+    interface OnItemClickForDataListener<T> {
         fun itemClickForData(view: View?, position: Int, data: T)
     }
 
-    interface OnItemLongClick {
+    interface OnItemLongClickListener {
         fun itemLongClick(view: View?, position: Int)
     }
 
-    interface OnItemLongClickForData<T> {
+    interface OnItemLongClickForDataListener<T> {
         fun itemLongClickForData(view: View?, position: Int, data: T)
     }
 
-    fun setOnItemClick(onItemClick: OnItemClick?) {
-        this.onItemClick = onItemClick
+    fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
+        this.onItemClickListener = onItemClickListener
     }
 
-    fun setOnItemClickForData(onItemClickForData: OnItemClickForData<T>) {
-        this.onItemClickForData = onItemClickForData
+    fun setOnItemClickForDataListener(onItemClickForDataListener: OnItemClickForDataListener<T>) {
+        this.onItemClickForDataListener = onItemClickForDataListener
     }
 
-    fun setOnItemLongClick(onItemLongClick: OnItemLongClick?) {
-        this.onItemLongClick = onItemLongClick
+    fun setOnItemLongClickListener(onItemLongClickListener: OnItemLongClickListener?) {
+        this.onItemLongClickListener = onItemLongClickListener
     }
 
-    fun setOnItemLongClickForData(onItemLongClickForData: OnItemLongClickForData<T>) {
-        this.onItemLongClickForData = onItemLongClickForData
+    fun setOnItemLongClickForDataListener(onItemLongClickForDataListener: OnItemLongClickForDataListener<T>) {
+        this.onItemLongClickForDataListener = onItemLongClickForDataListener
     }
 
     private fun setOnClick(view: View, position: Int) {
         view.setOnClickListener {
             try {
-                if (null != onItemClick) {
-                    onItemClick!!.itemClick(view, position)
+                if (null != onItemClickListener) {
+                    onItemClickListener!!.itemClick(view, position)
                 }
-                if (null != onItemClickForData) onItemClickForData!!.itemClickForData(
+                if (null != onItemClickForDataListener) onItemClickForDataListener!!.itemClickForData(
                     view,
                     position,
                     baseData[position]
@@ -422,11 +442,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     private fun setOnLongClick(v: View, position: Int) {
         v.setOnLongClickListener {
             try {
-                if (null != onItemLongClick) {
-                    onItemLongClick!!.itemLongClick(v, position)
+                if (null != onItemLongClickListener) {
+                    onItemLongClickListener!!.itemLongClick(v, position)
                 }
-                if (null != onItemLongClickForData) {
-                    onItemLongClickForData!!.itemLongClickForData(
+                if (null != onItemLongClickForDataListener) {
+                    onItemLongClickForDataListener!!.itemLongClickForData(
                         v,
                         position,
                         baseData[position]

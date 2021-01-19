@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,
-    HelloAdapter.OnItemClickForData<String>, HelloAdapter.OnHeadAndFootClick {
+    HelloAdapter.OnItemClickForDataListener<String>, HelloAdapter.OnHeadAndFootClickListener {
 
     var data: MutableList<String> = ArrayList()
     var headers: MutableList<View> = ArrayList()
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         setContentView(R.layout.activity_main)
 
 
-        for (i in 0..4) {
+        for (i in 0..14) {
             data.add("原始数据$i")
         }
 
@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         adapter = TestAdapter(this)
             .setLayoutId(R.layout.item_layout)
             .setData(data)
-//            .setEmptyLayoutId(R.layout.item_empty_layout_a)
-//            .showEmptyLayout(true)
+            .setEmptyLayoutId(R.layout.item_empty_layout_a)
+            .showEmptyLayout(true)
 //        val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
         var layoutIds: MutableList<Int> = arrayListOf()
         layoutIds.add(R.id.head_bt1)
@@ -53,12 +53,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         remove_header.setOnClickListener(this)
         remove_footer.setOnClickListener(this)
         add_data.setOnClickListener(this)
-        adapter?.setOnItemClickForData(this)
-        adapter?.setOnHeadAndFootClick(this)
+        adapter?.setOnItemClickForDataListener(this)
+        adapter?.setOnHeadAndFootClickListener(this)
 
-        header.setOnClickListener(View.OnClickListener {
-            Toast.makeText(this, "头部点击", Toast.LENGTH_SHORT).show()
-        })
     }
 
     var headerType = 0
