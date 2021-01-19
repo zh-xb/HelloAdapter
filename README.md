@@ -17,7 +17,7 @@ addHeadAndClickListener 方法添加头布局并对头布局中的view设置点�
 
 repositories {
 
-	maven { url 'https://jitpack.io' }
+	   maven { url 'https://jitpack.io' }
 	
 }
 
