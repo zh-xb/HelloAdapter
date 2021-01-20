@@ -13,6 +13,7 @@ addHeaderAndClickListener 方法添加头布局并对头布局中的view设置�
 
 实现OnHeadAndFootClickListener并重写headAndFootClick方法，
 
+
 TestAdapter继承自HelloAdapter，初始化Adapter。
 
 adapter = TestAdapter(this)
@@ -27,8 +28,8 @@ adapter = TestAdapter(this)
 
 头布局设置点击事件的view id
 
-var layoutIds: MutableList = arrayListOf()
-
+var layoutIds: MutableList<Int> = arrayListOf()
+	
 layoutIds.add(R.id.head_bt1)
 
 layoutIds.add(R.id.head_bt2)
@@ -50,4 +51,14 @@ val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
 在onCreateViewHelloHolder方法中创建holder的时候，可以自定义holder并继承HelloHolder，复写HelloHolder中的bindViewData方法，直接在自定义的holder中bindViewData方法里做数据绑定，这样在adapter比较复杂时，可以显得代码非常简洁清晰。
 
 
+	   
+	   repositories {
+	         maven { url 'https://jitpack.io' }
+	   }
+	   
+
+	    dependencies {
+	          implementation 'com.github.zh-xb:HelloAdapter:v1.0.1'
+	    }
+	    
   
