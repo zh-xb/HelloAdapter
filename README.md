@@ -58,7 +58,7 @@ val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
 	   
 
 	    dependencies {
-	          implementation 'com.github.zh-xb:HelloAdapter:v1.0.0'
+	          implementation 'com.github.zh-xb:HelloAdapter:v1.0.1'
 	    }
 	    
   
