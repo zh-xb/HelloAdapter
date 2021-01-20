@@ -16,15 +16,17 @@ addHeaderAndClickListener 方法添加头布局并对头布局中的view设置�
 
 TestAdapter继承自HelloAdapter，初始化Adapter。
 adapter = TestAdapter(this)
-    .setLayoutId(R.layout.item_layout) // 设置item的布局文件（必选）
-    .setData(data) // 设置adapter的数据集合（必选）
-    .setEmptyLayoutId(R.layout.item_empty_layout_a) // 设置adapter无数据时的布局（可选，有默认布局）
-    .showEmptyLayout(true) // adapter无数据时是否显示“暂无数据”的布局（默认显示）
+.setLayoutId(R.layout.item_layout) // 设置item的布局文件（必选）
+.setData(data) // 设置adapter的数据集合（必选）
+.setEmptyLayoutId(R.layout.item_empty_layout_a) // 设置adapter无数据时的布局（可选，有默认布局）
+.showEmptyLayout(true) // adapter无数据时是否显示“暂无数据”的布局（默认显示）
+
 头布局设置点击事件的view id
 var layoutIds: MutableList<Int> = arrayListOf()
 layoutIds.add(R.id.head_bt1)
 layoutIds.add(R.id.head_bt2)
 layoutIds.add(R.id.head_bt3)
+
 设置头布局，并设置点击事件
 val header: View = adapter?.addHeaderAndClickListener(R.layout.header_layout3,layoutIds)!!
 只添加头布局，不设置点击监听
