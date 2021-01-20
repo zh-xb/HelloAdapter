@@ -18,6 +18,7 @@ class TestAdapter(context: Context) : HelloAdapter<String>(context) {
     private val LAYOUT1 = 10
     private val LAYOUT2 = 20
 
+    //  当adapter为多布局时可以复写该方法
     override fun getItemViewHelloType(position: Int): Int {
         if (position % 2 == 0) {
             return LAYOUT1
@@ -27,7 +28,9 @@ class TestAdapter(context: Context) : HelloAdapter<String>(context) {
         return super.getItemViewHelloType(position)
     }
 
+    //  当adapter为多布局时可以复写该方法
     override fun onCreateViewHelloHolder(parent: ViewGroup, viewType: Int): HelloHolder<String> {
+        // 当adapter为多布局时，根据getItemViewHelloType返回的viewType来初始化不同布局和不同holder，数据绑定可在每个holder中做处理。
         if (viewType == LAYOUT1) {
             val view = LayoutInflater.from(context).inflate(R.layout.holder_layout1, parent, false)
             return LayoutHolder1(view)
@@ -39,10 +42,6 @@ class TestAdapter(context: Context) : HelloAdapter<String>(context) {
     }
 
     override fun bindViewHolder(holder: HelloHolder<String>, data: MutableList<String>, position: Int) {
-        if (holder.itemViewType != LAYOUT1&&holder.itemViewType != LAYOUT2) {
-            holder.setItemBackgroudColor(Color.parseColor("#23ee43"))
-            holder.itemView.item_layout_tv.text = data[position]
-        }
+        // 当adapter中为单一布局时，可以在此实现数据绑定。
     }
-
 }

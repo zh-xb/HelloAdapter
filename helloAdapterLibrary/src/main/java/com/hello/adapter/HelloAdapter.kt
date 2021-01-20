@@ -42,9 +42,9 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     // 空数据的viewHolder
     private var emptyHolder: HelloHolder<T>? = null
     // 头部view的父布局
-    private var headerViewLayout: LinearLayout? = null
+    private var headerViewParentLayout: LinearLayout? = null
     // 尾部view的父布局
-    private var footerViewLayout: LinearLayout? = null
+    private var footerViewParentLayout: LinearLayout? = null
 
 
     override fun getItemCount(): Int {
@@ -66,33 +66,18 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         }
     }
 
-    /**
-     * 多布局时，自定义布局类型
-     */
-    open fun getItemViewHelloType(position: Int): Int {
-        return DATA_VIEW
-    }
-
-    /**
-     * 多布局时，通过viewType创建不同的HelloHolder
-     */
-    open fun onCreateViewHelloHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
-        val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
-        return HelloHolder(view)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
         when {
             HEADER_VIEW == viewType -> {
-                if (null == headerViewLayout) {
+                if (null == headerViewParentLayout) {
                     initHeaderView()
                 } else {
-                    val headerViewParent = headerViewLayout!!.parent
+                    val headerViewParent = headerViewParentLayout!!.parent
                     if (headerViewParent is ViewGroup) {
-                        headerViewParent.removeView(headerViewLayout)
+                        headerViewParent.removeView(headerViewParentLayout)
                     }
                 }
-                return HelloHolder(headerViewLayout!!)
+                return HelloHolder(headerViewParentLayout!!)
             }
             EMPTY_VIEW == viewType -> {
                 val emptyLayout = if (emptyLayoutId == 0) {
@@ -105,26 +90,18 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                 emptyHolder = HelloHolder(emptyView)
                 return emptyHolder!!
             }
-//            DATA_VIEW == viewType -> {
-////                val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
-////                return HelloHolder(view)
-//                return onCreateViewHelloHolder(parent, viewType)
-//            }
             FOOTER_VIEW == viewType -> {
-                if (null == footerViewLayout) {
+                if (null == footerViewParentLayout) {
                     initFooterView()
                 } else {
-                    val footerViewParent = footerViewLayout!!.parent
+                    val footerViewParent = footerViewParentLayout!!.parent
                     if (footerViewParent is ViewGroup) {
-                        footerViewParent.removeView(footerViewLayout)
+                        footerViewParent.removeView(footerViewParentLayout)
                     }
                 }
-                return HelloHolder(footerViewLayout!!)
+                return HelloHolder(footerViewParentLayout!!)
             }
             else -> {
-//                val view: View =
-//                    LayoutInflater.from(context).inflate(R.layout.item_empty_layout2, parent, false)
-//                return HelloHolder(view)
                 return onCreateViewHelloHolder(parent, viewType)
             }
         }
@@ -159,6 +136,21 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    /**
+     * 多布局时，自定义布局类型
+     */
+    open fun getItemViewHelloType(position: Int): Int {
+        return DATA_VIEW
+    }
+
+    /**
+     * 多布局时，通过viewType创建不同的HelloHolder
+     */
+    open fun onCreateViewHelloHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
+        val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
+        return HelloHolder(view)
     }
 
     /**
@@ -248,12 +240,12 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @return 添加尾的view
      */
     open fun addFooterView(layoutId: Int): View {
-        if (null == footerViewLayout) {
+        if (null == footerViewParentLayout) {
             initFooterView()
         }
         val foot =
-            LayoutInflater.from(context).inflate(layoutId, footerViewLayout, false)
-        footerViewLayout!!.addView(foot)
+            LayoutInflater.from(context).inflate(layoutId, footerViewParentLayout, false)
+        footerViewParentLayout!!.addView(foot)
         return foot
     }
 
@@ -283,12 +275,12 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @return 添加头的view
      */
     open fun addHeaderView(layoutId: Int): View {
-        if (null == headerViewLayout) {
+        if (null == headerViewParentLayout) {
             initHeaderView()
         }
         val header =
-            LayoutInflater.from(context).inflate(layoutId, headerViewLayout, false)
-        headerViewLayout!!.addView(header)
+            LayoutInflater.from(context).inflate(layoutId, headerViewParentLayout, false)
+        headerViewParentLayout!!.addView(header)
         return header
     }
 
@@ -317,8 +309,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @param view
      */
     open fun removeFooterView(view: View?) {
-        if (null != footerViewLayout) {
-            footerViewLayout!!.removeView(view)
+        if (null != footerViewParentLayout) {
+            footerViewParentLayout!!.removeView(view)
         }
     }
 
@@ -328,8 +320,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @param viewIndex（添加的View下标值）
      */
     open fun removeFooterView(viewIndex: Int?) {
-        if (null != footerViewLayout && null != viewIndex) {
-            footerViewLayout!!.removeViewAt(viewIndex)
+        if (null != footerViewParentLayout && null != viewIndex) {
+            footerViewParentLayout!!.removeViewAt(viewIndex)
         }
     }
 
@@ -339,8 +331,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @param view
      */
     open fun removeHeaderView(view: View?) {
-        if (null != headerViewLayout) {
-            headerViewLayout!!.removeView(view)
+        if (null != headerViewParentLayout) {
+            headerViewParentLayout!!.removeView(view)
         }
     }
 
@@ -350,8 +342,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @param viewIndex（添加的View下标值）
      */
     open fun removeHeaderView(viewIndex: Int?) {
-        if (null != headerViewLayout && null != viewIndex) {
-            headerViewLayout!!.removeViewAt(viewIndex)
+        if (null != headerViewParentLayout && null != viewIndex) {
+            headerViewParentLayout!!.removeViewAt(viewIndex)
         }
     }
 
@@ -359,27 +351,27 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * 初始化头部布局
      */
     private fun initHeaderView() {
-        headerViewLayout = LinearLayout(context)
-        headerViewLayout!!.orientation = LinearLayout.VERTICAL
+        headerViewParentLayout = LinearLayout(context)
+        headerViewParentLayout!!.orientation = LinearLayout.VERTICAL
         val layoutParams = RecyclerView.LayoutParams(
             RecyclerView.LayoutParams.MATCH_PARENT,
             RecyclerView.LayoutParams.WRAP_CONTENT
         )
-        headerViewLayout!!.layoutParams = layoutParams
+        headerViewParentLayout!!.layoutParams = layoutParams
     }
 
     /**
      * 初始化底部布局
      */
     private fun initFooterView() {
-        if (null == footerViewLayout) {
-            footerViewLayout = LinearLayout(context)
-            footerViewLayout!!.orientation = LinearLayout.VERTICAL
+        if (null == footerViewParentLayout) {
+            footerViewParentLayout = LinearLayout(context)
+            footerViewParentLayout!!.orientation = LinearLayout.VERTICAL
             val layoutParams = RecyclerView.LayoutParams(
                 RecyclerView.LayoutParams.MATCH_PARENT,
                 RecyclerView.LayoutParams.WRAP_CONTENT
             )
-            footerViewLayout!!.layoutParams = layoutParams
+            footerViewParentLayout!!.layoutParams = layoutParams
         }
     }
 

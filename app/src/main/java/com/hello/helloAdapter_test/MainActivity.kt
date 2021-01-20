@@ -21,11 +21,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         for (i in 0..14) {
             data.add("原始数据$i")
         }
-
 
         adapter = TestAdapter(this)
             .setLayoutId(R.layout.item_layout)
@@ -46,7 +44,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         test_rv.layoutManager = llm
         test_rv.adapter = adapter
 
-
         other_bt.setOnClickListener(this)
         add_header.setOnClickListener(this)
         add_footer.setOnClickListener(this)
@@ -66,7 +63,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 val header: View = (if (headerType % 2 == 0) {
                     adapter?.addHeaderView(R.layout.header_layout2)
                 } else {
-                    adapter?.addHeaderView(R.layout.header_layout3)
+                    var layoutIds: MutableList<Int> = arrayListOf()
+                    layoutIds.add(R.id.head_bt1)
+                    layoutIds.add(R.id.head_bt2)
+                    layoutIds.add(R.id.head_bt3)
+                    adapter?.addHeaderAndClickListener(R.layout.header_layout3,layoutIds)!!
                 })!!
                 headers.add(header)
                 headerType++
