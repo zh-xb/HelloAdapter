@@ -1,11 +1,11 @@
 package com.hello.adapter
 
 import android.content.Context
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
@@ -17,13 +17,17 @@ import java.util.*
 abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<HelloHolder<T>>() {
     // 显示数据的布局id
     private var layoutId = 0
+
     // 空数据要传的布局id
     private var emptyLayoutId = 0
     private var baseData: MutableList<T> = ArrayList<T>()
+
     // 要监听的item上的viewid集合
     private var listenerViewsIds: List<Int>? = null
+
     // 自定义的一个String类型的数据
     private var customData: String? = null
+
     // 无数据时是否显示暂无数据提示页面
     private var showEmptyLayout = true
     private var onItemClickListener: OnItemClickListener? = null
@@ -31,18 +35,25 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     private var onItemLongClickListener: OnItemLongClickListener? = null
     private var onItemLongClickForDataListener: OnItemLongClickForDataListener<T>? = null
     private var onHeadAndFootClickListener: OnHeadAndFootClickListener? = null
+
     // 头布局view
     private val HEADER_VIEW = 0x01
+
     // 尾布局view
     private val FOOTER_VIEW = 0x02
+
     // 数据填充的view
     private val DATA_VIEW = 0x03
+
     // 空数据显示的view
     private val EMPTY_VIEW = 0x04
+
     // 空数据的viewHolder
     private var emptyHolder: HelloHolder<T>? = null
+
     // 头部view的父布局
     private var headerViewParentLayout: LinearLayout? = null
+
     // 尾部view的父布局
     private var footerViewParentLayout: LinearLayout? = null
 
@@ -60,7 +71,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
             return EMPTY_VIEW
         }
         return if (position < itemCount - 1) {
-            getItemViewHelloType(position-2)
+            getItemViewHelloType(position - 2)
         } else {
             FOOTER_VIEW
         }
@@ -130,7 +141,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                             }
                         }
                     }
-                    holder.bindViewData(baseData,dataPosition)
+                    holder.bindViewData(baseData, dataPosition)
                 }
             }
         } catch (e: Exception) {
@@ -234,12 +245,51 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
+     * 获取所有的尾布局中添加的子view
+     */
+    open fun getAllFooterView(): Sequence<View>? {
+        return footerViewParentLayout?.children
+    }
+
+    /**
+     * 获取所有的头布局中添加的子view
+     */
+    open fun getAllHeaderView(): Sequence<View>? {
+        return headerViewParentLayout?.children
+    }
+
+    /**
+     * 获取头布局中添加的子view数量
+     */
+    open fun getHeaderViewCount(): Int? {
+        return headerViewParentLayout?.childCount
+    }
+
+    /**
+     * 获取尾布局中添加的子view数量
+     */
+    open fun getFooterViewCount(): Int? {
+        return footerViewParentLayout?.childCount
+    }
+
+    /**
      * 添加尾布局
      *
      * @param layoutId
      * @return 添加尾的view
      */
     open fun addFooterView(layoutId: Int): View {
+        return addFooterView(layoutId, -1)
+    }
+
+    /**
+     * 在指定位置添加尾布局
+     *
+     * @param layoutId
+     * @param index 放置尾布局view的下标
+     * @return 添加尾的view
+     */
+    open fun addFooterView(layoutId: Int, index: Int): View {
         if (null == footerViewParentLayout) {
             initFooterView()
         }
@@ -255,10 +305,10 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @param layoutId
      * @return 添加尾的view
      */
-    open fun addFooterAndClickListener(layoutId: Int, layoutIds: MutableList<Int>): View? {
-        val foot:View = addFooterView(layoutId)
-        for (layoutId in layoutIds) {
-            val view: View = foot.findViewById(layoutId)
+    open fun addFooterAndClickListener(layoutId: Int, viewIds: MutableList<Int>): View? {
+        val foot: View = addFooterView(layoutId)
+        for (viewId in viewIds) {
+            val view: View = foot.findViewById(viewId)
             view.setOnClickListener {
                 if (null != onHeadAndFootClickListener) {
                     onHeadAndFootClickListener!!.headAndFootClick(view)
@@ -275,12 +325,23 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @return 添加头的view
      */
     open fun addHeaderView(layoutId: Int): View {
+        return addHeaderView(layoutId, -1)
+    }
+
+    /**
+     * 在指定位置添加头布局
+     *
+     * @param layoutId
+     * @param index 放置头布局view的下标
+     * @return 添加头的view
+     */
+    open fun addHeaderView(layoutId: Int, index: Int): View {
         if (null == headerViewParentLayout) {
             initHeaderView()
         }
         val header =
             LayoutInflater.from(context).inflate(layoutId, headerViewParentLayout, false)
-        headerViewParentLayout!!.addView(header)
+        headerViewParentLayout!!.addView(header, index)
         return header
     }
 
@@ -290,10 +351,10 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      * @param layoutId
      * @return 添加头的view
      */
-    open fun addHeaderAndClickListener(layoutId: Int, layoutIds: MutableList<Int>): View {
+    open fun addHeaderAndClickListener(layoutId: Int, viewIds: MutableList<Int>): View {
         val header = addHeaderView(layoutId)
-        for (layoutId in layoutIds) {
-            val view: View = header.findViewById(layoutId)
+        for (viewId in viewIds) {
+            val view: View = header.findViewById(viewId)
             view.setOnClickListener {
                 if (null != onHeadAndFootClickListener) {
                     onHeadAndFootClickListener!!.headAndFootClick(view)
@@ -304,7 +365,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
-     * 移除尾
+     * 移除指定的尾布局view
      *
      * @param view
      */
@@ -315,7 +376,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
-     * 移除尾
+     * 移除指定的尾布局view
      *
      * @param viewIndex（添加的View下标值）
      */
@@ -326,7 +387,16 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
-     * 移除头View
+     * 移除所有尾布局View
+     */
+    open fun removeAllFooterView() {
+        if (null != footerViewParentLayout) {
+            footerViewParentLayout!!.removeAllViews()
+        }
+    }
+
+    /**
+     * 移除指定的头布局View
      *
      * @param view
      */
@@ -337,13 +407,22 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
-     * 移除头View
+     * 根据view下标移除头布局View
      *
      * @param viewIndex（添加的View下标值）
      */
     open fun removeHeaderView(viewIndex: Int?) {
         if (null != headerViewParentLayout && null != viewIndex) {
             headerViewParentLayout!!.removeViewAt(viewIndex)
+        }
+    }
+
+    /**
+     * 移除所有的头布局View
+     */
+    open fun removeAllHeaderView() {
+        if (null != headerViewParentLayout) {
+            headerViewParentLayout!!.removeAllViews()
         }
     }
 
@@ -375,7 +454,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         }
     }
 
-    protected abstract fun bindViewHolder(holder: HelloHolder<T>, data: MutableList<T>, position: Int)
+    protected abstract fun bindViewHolder(
+        holder: HelloHolder<T>,
+        data: MutableList<T>,
+        position: Int
+    )
 
     /**
      * 设置头和尾view的监听事件

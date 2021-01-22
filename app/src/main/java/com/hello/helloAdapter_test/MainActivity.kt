@@ -1,6 +1,7 @@
 package com.hello.helloAdapter_test
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), View.OnClickListener,
     HelloAdapter.OnItemClickForDataListener<String>, HelloAdapter.OnHeadAndFootClickListener {
 
+    var TAG = "MainActivity❤❤❤❤"
     var data: MutableList<String> = ArrayList()
     var headers: MutableList<View> = ArrayList()
     var footers: MutableList<View> = ArrayList()
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         layoutIds.add(R.id.head_bt1)
         layoutIds.add(R.id.head_bt2)
         layoutIds.add(R.id.head_bt3)
-        val header: View = adapter?.addHeaderAndClickListener(R.layout.header_layout3,layoutIds)!!
+        val header: View = adapter?.addHeaderAndClickListener(R.layout.header_layout3, layoutIds)!!
         headers.add(header)
         headerType++
 
@@ -53,6 +55,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         adapter?.setOnItemClickForDataListener(this)
         adapter?.setOnHeadAndFootClickListener(this)
 
+        var views: Sequence<View>? = adapter?.getAllHeaderView();
+        Log.i(TAG, "getAllFooterView：" + views?.count())
     }
 
     var headerType = 0
@@ -67,10 +71,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                     layoutIds.add(R.id.head_bt1)
                     layoutIds.add(R.id.head_bt2)
                     layoutIds.add(R.id.head_bt3)
-                    adapter?.addHeaderAndClickListener(R.layout.header_layout3,layoutIds)!!
+                    adapter?.addHeaderAndClickListener(R.layout.header_layout3, layoutIds)!!
                 })!!
                 headers.add(header)
                 headerType++
+
+                var views: Sequence<View>? = adapter?.getAllHeaderView();
+                Log.i(TAG, "getAllHeaderView：" + views?.count())
+                Log.i(TAG, "getHeaderViewCount：" + adapter?.getHeaderViewCount())
             }
             R.id.remove_header -> {
                 if (headerType > 0) {
@@ -78,6 +86,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                     adapter?.removeHeaderView(headers[headerType])
                     headers.removeAt(headerType);
                 }
+                var views: Sequence<View>? = adapter?.getAllHeaderView();
+                Log.i(TAG, "getAllHeaderView：" + views?.count())
+                Log.i(TAG, "getHeaderViewCount：" + adapter?.getHeaderViewCount())
             }
             R.id.add_footer -> {
                 val footer: View = (if (footerType % 2 == 0) {
@@ -87,6 +98,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 })!!
                 footers.add(footer)
                 footerType++
+                var views: Sequence<View>? = adapter?.getAllFooterView();
+                Log.i(TAG, "getAllFooterView：" + views?.count())
+                Log.i(TAG, "getFooterViewCount：" + adapter?.getFooterViewCount())
             }
             R.id.remove_footer -> {
                 if (footerType > 0) {
@@ -94,6 +108,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                     adapter?.removeFooterView(footers[footerType])
                     footers.removeAt(footerType);
                 }
+                var views: Sequence<View>? = adapter?.getAllFooterView();
+                Log.i(TAG, "getAllFooterView：" + views?.count())
+                Log.i(TAG, "getFooterViewCount：" + adapter?.getFooterViewCount())
             }
             R.id.add_data -> {
                 data.add("新增数据")
@@ -113,15 +130,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun headAndFootClick(view: View?) {
-        when(view?.id){
+        when (view?.id) {
             R.id.head_bt1 -> {
-                Toast.makeText(this,"我是button1",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "我是button1", Toast.LENGTH_SHORT).show()
             }
             R.id.head_bt2 -> {
-                Toast.makeText(this,"我是button2",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "我是button2", Toast.LENGTH_SHORT).show()
             }
             R.id.head_bt3 -> {
-                Toast.makeText(this,"我是button3",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "我是button3", Toast.LENGTH_SHORT).show()
             }
         }
     }
