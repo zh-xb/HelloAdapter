@@ -78,8 +78,8 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelloHolder<T> {
-        when {
-            HEADER_VIEW == viewType -> {
+        when(viewType) {
+            HEADER_VIEW -> {
                 if (null == headerViewParentLayout) {
                     initHeaderView()
                 } else {
@@ -90,7 +90,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                 }
                 return HelloHolder(headerViewParentLayout!!)
             }
-            EMPTY_VIEW == viewType -> {
+            EMPTY_VIEW -> {
                 val emptyLayout = if (emptyLayoutId == 0) {
                     R.layout.item_empty_layout_default
                 } else {
@@ -101,7 +101,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                 emptyHolder = HelloHolder(emptyView)
                 return emptyHolder!!
             }
-            FOOTER_VIEW == viewType -> {
+            FOOTER_VIEW -> {
                 if (null == footerViewParentLayout) {
                     initFooterView()
                 } else {
