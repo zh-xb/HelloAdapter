@@ -162,6 +162,19 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         }
     }
 
+    override fun onBindViewHolder(holder: HelloHolder<T>, position: Int, payloads: MutableList<Any>) {
+        super.onBindViewHolder(holder, position, payloads)
+        onBindViewHelloHolder(holder, position, payloads)
+    }
+
+    /**
+     *
+     */
+    open fun onBindViewHelloHolder(holder: HelloHolder<T>, position: Int, payloads: MutableList<Any>) {
+
+    }
+
+
     /**
      * 多布局时，自定义布局类型
      */
