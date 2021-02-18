@@ -52,13 +52,16 @@ val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
 
 
 	   
-	   repositories {
-	         maven { url 'https://jitpack.io' }
-	   }
+	repositories {
+              maven { url 'https://jitpack.io' }
+	}
 	   
-
-	    dependencies {
-	          implementation 'com.github.zh-xb:HelloAdapter:v1.0.1'
-	    }
+        dependencies {
+	      implementation 'com.github.zh-xb:HelloAdapter:1.0.2'
+	}
 	    
+1.0.2版本更新：
+
+	适配SmartRefreshLayout刷新框架的上拉加载更多，
+	优化在未添加为布局时SmartRefreshLayout无法上拉加载问题。
   
