@@ -30,6 +30,10 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
     // 无数据时是否显示暂无数据提示页面
     private var showEmptyLayout = true
+
+    // 是否显示尾部布局
+    private var isShowFooter = false
+
     private var onItemClickListener: OnItemClickListener? = null
     private var onItemClickForDataListener: OnItemClickForDataListener<T>? = null
     private var onItemLongClickListener: OnItemLongClickListener? = null
@@ -60,7 +64,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
     override fun getItemCount(): Int {
         // 增加 头、尾和空数据3个固定布局
-        return baseData.size + 3
+        return if (isShowFooter) {
+            baseData.size + 3
+        } else {
+            baseData.size + 2
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -70,10 +78,15 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         if (1 == position) {
             return EMPTY_VIEW
         }
-        return if (position < itemCount - 1) {
-            getItemViewHelloType(position - 2)
+
+        return if (isShowFooter) {
+            if (position < itemCount - 1) {
+                getItemViewHelloType(position - 2)
+            } else {
+                FOOTER_VIEW
+            }
         } else {
-            FOOTER_VIEW
+            getItemViewHelloType(position - 2)
         }
     }
 
@@ -190,6 +203,15 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
+     * 是否显示尾部布局
+     */
+    fun isShowFooter(isShow: Boolean): HelloAdapter<T> {
+        isShowFooter = isShow
+        notifyDataSetChanged()
+        return this
+    }
+
+    /**
      * 设置监听item上的view点击事件（传参view的id集合）
      */
     fun setListenerViewsIds(listenerViewsIds: MutableList<Int>?): HelloAdapter<T> {
@@ -296,6 +318,10 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
         val foot =
             LayoutInflater.from(context).inflate(layoutId, footerViewParentLayout, false)
         footerViewParentLayout!!.addView(foot)
+        if (!isShowFooter && getFooterViewCount()!! > 0) {
+            isShowFooter = true
+            notifyDataSetChanged()
+        }
         return foot
     }
 
@@ -372,6 +398,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     open fun removeFooterView(view: View?) {
         if (null != footerViewParentLayout) {
             footerViewParentLayout!!.removeView(view)
+            if (getFooterViewCount() == 0) {
+                if (isShowFooter){
+                    isShowFooter = false
+                }
+            }
         }
     }
 
@@ -383,6 +414,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     open fun removeFooterView(viewIndex: Int?) {
         if (null != footerViewParentLayout && null != viewIndex) {
             footerViewParentLayout!!.removeViewAt(viewIndex)
+            if (getFooterViewCount() == 0) {
+                if (isShowFooter){
+                    isShowFooter = false
+                }
+            }
         }
     }
 
@@ -392,6 +428,11 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     open fun removeAllFooterView() {
         if (null != footerViewParentLayout) {
             footerViewParentLayout!!.removeAllViews()
+            if (getFooterViewCount() == 0) {
+                if (isShowFooter){
+                    isShowFooter = false
+                }
+            }
         }
     }
 

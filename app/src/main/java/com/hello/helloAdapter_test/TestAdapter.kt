@@ -1,12 +1,10 @@
 package com.hello.helloAdapter_test
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hello.adapter.HelloAdapter
 import com.hello.adapter.HelloHolder
-import kotlinx.android.synthetic.main.item_layout.view.*
 
 /**
  * @Description:
