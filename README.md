@@ -53,7 +53,7 @@ val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
 
 	   
 	repositories {
-              maven { url 'https://jitpack.io' }
+          maven { url 'https://jitpack.io' }
 	}
 	   
     dependencies {
