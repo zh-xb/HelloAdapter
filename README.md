@@ -56,7 +56,7 @@ val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
               maven { url 'https://jitpack.io' }
 	}
 	   
-        dependencies {
+    dependencies {
 	      implementation 'com.github.zh-xb:HelloAdapter:1.0.2'
 	}
 	    
