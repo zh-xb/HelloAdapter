@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hello.adapter.HelloAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,9 +31,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         adapter = TestAdapter(this)
             .setLayoutId(R.layout.item_layout)
             .setData(data)
-            .setEmptyLayoutId(R.layout.item_empty_layout_a)
-            .showEmptyLayout(true)
-//        val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
+            .showEmptyLayout(false)
+
         var layoutIds: MutableList<Int> = arrayListOf()
         layoutIds.add(R.id.head_bt1)
         layoutIds.add(R.id.head_bt2)
@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
 
         val llm =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+//        val llm =
+//            GridLayoutManager(this,4)
         test_rv.layoutManager = llm
         test_rv.adapter = adapter
 
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
     var footerType = 0
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.add_header -> {
+            R.id.add_header -> { // 添加头布局
                 val header: View = (if (headerType % 2 == 0) {
                     adapter?.addHeaderView(R.layout.header_layout2)
                 } else {
@@ -80,7 +82,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 Log.i(TAG, "getAllHeaderView：" + views?.count())
                 Log.i(TAG, "getHeaderViewCount：" + adapter?.getHeaderViewCount())
             }
-            R.id.remove_header -> {
+            R.id.remove_header -> { // 移除头布局
                 if (headerType > 0) {
                     headerType--
                     adapter?.removeHeaderView(headers[headerType])
@@ -90,7 +92,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 Log.i(TAG, "getAllHeaderView：" + views?.count())
                 Log.i(TAG, "getHeaderViewCount：" + adapter?.getHeaderViewCount())
             }
-            R.id.add_footer -> {
+            R.id.add_footer -> { // 添加尾布局
                 val footer: View = (if (footerType % 2 == 0) {
                     adapter?.addFooterView(R.layout.footer_layout2)
                 } else {
@@ -102,7 +104,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 Log.i(TAG, "getAllFooterView：" + views?.count())
                 Log.i(TAG, "getFooterViewCount：" + adapter?.getFooterViewCount())
             }
-            R.id.remove_footer -> {
+            R.id.remove_footer -> { // 移除尾布局
                 if (footerType > 0) {
                     footerType--
                     adapter?.removeFooterView(footers[footerType])
@@ -112,13 +114,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 Log.i(TAG, "getAllFooterView：" + views?.count())
                 Log.i(TAG, "getFooterViewCount：" + adapter?.getFooterViewCount())
             }
-            R.id.add_data -> {
+            R.id.add_data -> { // 添加数据
                 data.add("新增数据")
                 adapter?.setData(data)
             }
-            R.id.other_bt -> {
+            R.id.other_bt -> { // 清空数据
                 data.clear()
-                adapter?.setData(data)
+                adapter?.notifyDataSetChanged()
+//                adapter?.setData(data)
+//                adapter?.showEmptyLayout(true)
             }
             else -> {
             }
@@ -126,7 +130,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun itemClickForData(view: View?, position: Int, data: String) {
-        Toast.makeText(this, data, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, data+position, Toast.LENGTH_SHORT).show()
     }
 
     override fun headAndFootClick(view: View?) {
