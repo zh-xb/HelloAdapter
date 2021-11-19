@@ -57,11 +57,7 @@ val header: View = adapter?.addHeaderView(R.layout.header_layout3)!!
 	}
 	   
     dependencies {
-	      implementation 'com.github.zh-xb:HelloAdapter:1.0.2'
+	      implementation 'com.github.zh-xb:HelloAdapter:1.0.3'
 	}
 	    
-1.0.2版本更新：
-
-	适配SmartRefreshLayout刷新框架的上拉加载更多，
-	优化在未添加尾布局时SmartRefreshLayout无法上拉加载问题。
   
