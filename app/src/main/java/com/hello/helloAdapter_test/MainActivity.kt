@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         adapter = TestAdapter(this)
             .setLayoutId(R.layout.item_layout)
             .setData(data)
-            .showEmptyLayout(false)
+            .isShowEmptyLayout(true)
 
         var layoutIds: MutableList<Int> = arrayListOf()
         layoutIds.add(R.id.head_bt1)

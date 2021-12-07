@@ -22,7 +22,6 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
     // 空数据要传的布局id
     private var emptyLayoutId = 0
-    private var baseData: MutableList<T> = ArrayList<T>()
 
     // 要监听的item上的viewid集合
     private var listenerViewsIds: List<Int>? = null
@@ -38,13 +37,6 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
     // 无数据时是否显示暂无数据提示页面
     var isShowEmptyLayout = true
-
-
-    private var onItemClickListener: OnItemClickListener? = null
-    private var onItemClickForDataListener: OnItemClickForDataListener<T>? = null
-    private var onItemLongClickListener: OnItemLongClickListener? = null
-    private var onItemLongClickForDataListener: OnItemLongClickForDataListener<T>? = null
-    private var onHeadAndFootClickListener: OnHeadAndFootClickListener? = null
 
     // 头布局view
     private val HEADER_VIEW = 0x01
@@ -67,6 +59,13 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     // 尾部view的父布局
     private var footerViewParentLayout: LinearLayout? = null
 
+    private var baseData: MutableList<T> = ArrayList()
+    private var onItemClickListener: OnItemClickListener? = null
+    private var onItemClickForDataListener: OnItemClickForDataListener<T>? = null
+    private var onItemLongClickListener: OnItemLongClickListener? = null
+    private var onItemLongClickForDataListener: OnItemLongClickForDataListener<T>? = null
+    private var onHeadAndFootClickListener: OnHeadAndFootClickListener? = null
+
 
     override fun getItemCount(): Int {
 
@@ -88,20 +87,16 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
     override fun getItemViewType(position: Int): Int {
 
-        var count = 0
         if (isShowHeadLayout && 0 == position) {
-            count++
             return HEADER_VIEW
         }
         if (isShowEmptyLayout && baseData.size == 0) {
             if (isShowHeadLayout) {
                 if (1 == position) {
-                    count++
                     return EMPTY_VIEW
                 }
             } else {
                 if (0 == position) {
-                    count++
                     return EMPTY_VIEW
                 }
             }
@@ -109,12 +104,12 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
         return if (isShowFooterLayout) {
             if (position < itemCount - 1) {
-                getItemViewHelloType(position - count)
+                getItemViewHelloType(position)
             } else {
                 FOOTER_VIEW
             }
         } else {
-            getItemViewHelloType(position - count)
+            getItemViewHelloType(position)
         }
     }
 
@@ -182,8 +177,12 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
                         for (viewId in listenerViewsIds!!) {
                             val cv: View? = holder.getView(viewId)
                             if (cv != null) {
-                                setOnClick(cv, dataPosition)
-                                setOnLongClick(cv, dataPosition)
+                                if (null != onItemClickListener || null != onItemClickForDataListener) {
+                                    setOnClick(cv, dataPosition)
+                                }
+                                if (null != onItemLongClickListener || null != onItemLongClickForDataListener) {
+                                    setOnLongClick(cv, dataPosition)
+                                }
                             }
                         }
                     }
@@ -249,7 +248,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     /**
      * 数据data为空时，是否显示空数据的页面（）
      */
-    fun showEmptyLayout(isShow: Boolean): HelloAdapter<T> {
+    fun isShowEmptyLayout(isShow: Boolean): HelloAdapter<T> {
         isShowEmptyLayout = isShow
         notifyDataSetChanged()
         return this
@@ -260,6 +259,15 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
      */
     fun isShowFooter(isShow: Boolean): HelloAdapter<T> {
         isShowFooterLayout = isShow
+        notifyDataSetChanged()
+        return this
+    }
+
+    /**
+     * 是否显示头部布局
+     */
+    fun isShowHeader(isShow: Boolean): HelloAdapter<T> {
+        isShowHeadLayout = isShow
         notifyDataSetChanged()
         return this
     }
@@ -379,9 +387,10 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
-     * 添加尾布局并给尾布局的子view设置点击事件
+     * 添加尾部布局并给尾布局的子view设置点击事件
      *
-     * @param layoutId
+     * @param layoutId 布局id
+     * @param viewIds 设置点击事件的view的id
      * @return 添加尾的view
      */
     open fun addFooterAndClickListener(layoutId: Int, viewIds: MutableList<Int>): View? {
@@ -410,7 +419,7 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     /**
      * 在指定位置添加头布局
      *
-     * @param layoutId
+     * @param layoutId 布局id
      * @param index 放置头布局view的下标
      * @return 添加头的view
      */
@@ -427,9 +436,10 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
     }
 
     /**
-     * 添加头布局并给头布局的子view设置点击事件
+     * 添加头部布局并给头布局的子view设置点击事件
      *
-     * @param layoutId
+     * @param layoutId 头部布局id
+     * @param viewIds 设置点击事件的view的id
      * @return 添加头的view
      */
     open fun addHeaderAndClickListener(layoutId: Int, viewIds: MutableList<Int>): View {
