@@ -68,48 +68,29 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
 
     override fun getItemCount(): Int {
-
-        var count = baseData.size
-
-        if (isShowHeadLayout) {
-            count++
+        // 增加 头、尾和空数据3个固定布局
+        return if (isShowFooterLayout) {
+            baseData.size + 3
+        } else {
+            baseData.size + 2
         }
-        if (isShowFooterLayout) {
-            count++
-        }
-        if (baseData.size == 0) {
-            if (isShowEmptyLayout) {
-                count++
-            }
-        }
-        return count
     }
 
     override fun getItemViewType(position: Int): Int {
-
-        if (isShowHeadLayout && 0 == position) {
+        if (0 == position) {
             return HEADER_VIEW
         }
-        if (isShowEmptyLayout && baseData.size == 0) {
-            if (isShowHeadLayout) {
-                if (1 == position) {
-                    return EMPTY_VIEW
-                }
-            } else {
-                if (0 == position) {
-                    return EMPTY_VIEW
-                }
-            }
+        if (1 == position) {
+            return EMPTY_VIEW
         }
-
         return if (isShowFooterLayout) {
             if (position < itemCount - 1) {
-                getItemViewHelloType(position)
+                getItemViewHelloType(position - 2)
             } else {
                 FOOTER_VIEW
             }
         } else {
-            getItemViewHelloType(position)
+            getItemViewHelloType(position - 2)
         }
     }
 
@@ -156,19 +137,16 @@ abstract class HelloAdapter<T>(var context: Context) : RecyclerView.Adapter<Hell
 
     override fun onBindViewHolder(holder: HelloHolder<T>, position: Int) {
         try {
-            if (holder.itemViewType != HEADER_VIEW && holder.itemViewType != FOOTER_VIEW && holder.itemViewType != EMPTY_VIEW) {
-
-                var count = 0
-                if (isShowHeadLayout) {
-                    count++
+            if (holder.itemViewType == FOOTER_VIEW && getFooterViewCount() == 0) {
+                holder.setVisibility(false)
+            } else if (holder.itemViewType == EMPTY_VIEW && null != emptyHolder) { // 数据为空的布局
+                if (isShowEmptyLayout && baseData.size == 0) {
+                    emptyHolder!!.setVisibility(true)
+                } else {
+                    emptyHolder!!.setVisibility(false)
                 }
-                if (baseData.size == 0) {
-                    if (isShowEmptyLayout) {
-                        count++
-                    }
-                }
-                val dataPosition = position - count
-
+            } else if (holder.itemViewType != HEADER_VIEW && holder.itemViewType != FOOTER_VIEW && holder.itemViewType != EMPTY_VIEW) {
+                val dataPosition = position - 2
                 if (dataPosition < baseData.size) {
                     bindViewHolder(holder, baseData, dataPosition)
                     setOnClick(holder.itemView, dataPosition)
